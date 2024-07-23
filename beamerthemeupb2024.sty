@@ -1,0 +1,414 @@
+% beamerthemeupb2024.sty
+% Max Hoffmann
+% max.hoffmann@math.upb.de
+% Version: 2024Jun03
+
+% This is suggestion for using the Paderborn University corperated design
+% in LaTeX-Beamer. Feel free to optimize this implementation.
+
+\mode<presentation>
+
+% disable navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+%%%%% REQUIREMENTS %%%%%
+% we use TIKZ for drawing the background network on the slides
+\RequirePackage{tikz}
+\usetikzlibrary{positioning}
+\tikzset{mylinespace/.style={%
+    execute at begin node=\begin{spacing}{#1}\hspace{0pt},%
+    execute at end node=\vspace{-\ht\strutbox}\end{spacing}}}
+
+% we need this packages for importing images and using colors
+% especially in tables
+\RequirePackage{graphicx,xcolor,colortbl,svg}
+
+
+% change the font size of captions 
+\RequirePackage[font=footnotesize]{caption}
+
+
+% FONT
+% we use Segoe UI as the default font
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{fontspec}
+\setsansfont{Segoe UI}
+
+% COLOR DEFINITION
+% defining the UPB-colors
+\definecolor{upb_ultrablue}{RGB}{0,37,170}
+
+\definecolor{upb_skyblue}{RGB}{10,117,196}
+\definecolor{upb_saphirblue}{RGB}{24,28,98}
+\definecolor{upb_irisviolet}{RGB}{126,63,168}
+\definecolor{upb_fuchsiared}{RGB}{193,56,160}
+
+\definecolor{upb_oceanblue}{RGB}{35,169,201}
+\definecolor{upb_arcticblue}{RGB}{80,209,209}
+
+% GEOMETRY
+% setting the parskip and the margins
+\RequirePackage{setspace}
+\parskip=1ex
+\setbeamersize{text margin left=6mm,text margin right=7mm}
+
+
+%%%%%% LOGOS %%%%%
+% “\logopath” specifies the path to the UPB logo used. There is a German and an
+% English version. Which one is used can be specified via the options
+% “logogerman”, “logoenglish” when calling \usetheme[<options>]{upb2024}.
+\newcommand{\logopath}{abb_theme/UPB_Logo_DE_vierfarbig_RGB.jpg}
+
+% specifying the options
+\DeclareOptionBeamer{logogerman}[true]{\renewcommand{\logopath}{abb_theme/UPB_Logo_DE_vierfarbig_RGB.jpg}}
+\DeclareOptionBeamer{logoenglish}[true]{\renewcommand{\logopath}{abb_theme/UPB_Logo_ENG_coloured_RGB.jpg}}
+\ProcessOptionsBeamer
+
+% With the “secondlogo” option, an additional logo can be integrated on the
+% title and final page alongside the UPB logo. The file path to the logo can be
+% defined with the command “\renewcommand{\secondlogopath}{<yourPath>}. One can
+% also use the command “\renewcommand{\secondlogoheight}{<yourheight>} to
+% optionally set the height of the second logo. By default, this is 1 cm, which
+% corresponds exactly to the height of the UPB logo.
+\newcommand{\secondlogopath}{abb_theme/secondlogo.png}
+\newcommand{\secondlogoheight}{1cm}
+
+% The condition is used for internal management of whether a second logo is used
+\newif\ifsecondlogo\secondlogofalse
+\DeclareOptionBeamer{secondlogo}[true]{\secondlogotrue}
+
+
+%%%%% Frame Design %%%%%%
+% In addition to the normal standard layout for frames, there are various
+% special layouts. Internally, the following conditions are used to manage which
+% frame layout is to be used for a specific slide.
+
+\newif\iftocframe\tocframefalse % Frame for TOC
+\newif\ifsectionframe\sectionframefalse % Frame at the beginning of a new section
+\newif\ifthankyouframe\thankyouframefalse % Frame for the last slide
+
+% If the corresponding keyword is called as an option for “\begin{frame}[...]”,
+% the corresponding condition is set to true.
+\makeatletter
+\define@key{beamerframe}{tocframe}[true]{%
+  \tocframetrue
+}
+\define@key{beamerframe}{sectionframe}[true]{%
+  \sectionframetrue
+}
+\define@key{beamerframe}{thankyouframe}[true]{%
+  \thankyouframetrue
+}
+\makeatother
+
+% At the end of each slide, all conditions are reset to “false”. As the frame
+% environment does not allow any actions at the end by default, some trickery
+% is required.
+\makeatletter
+\patchcmd{\beamer@doseveralframes}% <cmd>
+  {\beamer@reseteecodes}% <search>
+  {\beamer@reseteecodes\tocframefalse\sectionframefalse\thankyouframefalse}% <replace>
+  {}{}% <success><failure>
+\makeatother
+
+%TITLEPAGE
+%There are three layouts to choose from for the title page: "texttitle"
+% (without picture), "picturetitlenarrow" (with background picture and narrow
+% text area) and "picturetitlewide" (with background picture and wide text area).  
+\newcounter{titlepagestyle}
+\setcounter{titlepagestyle}{1}
+\DeclareOptionBeamer{texttitle}[true]{\setcounter{titlepagestyle}{1}}
+\DeclareOptionBeamer{picturetitlenarrow}[true]{\setcounter{titlepagestyle}{2}}
+\DeclareOptionBeamer{picturetitlewide}[true]{\setcounter{titlepagestyle}{3}}
+\ProcessOptionsBeamer
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Not yet implemented %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% One can choose between five different photos for the cover page as standard.  %
+% The corresponding options are:												%
+%     bbridge (default), btower, library, meadow, gwindows						%
+%																				%
+% One can use \renewcommand{titlephotopath}{<yourpath>} to include an own photo %
+% \newcommand{titlephotopath}{@TODO}											%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%% BACKGROUND %%%
+% The background for all frames is defined here.
+\setbeamertemplate{background}{
+	\begin{tikzpicture}
+		\useasboundingbox (0,0) rectangle (\the\paperwidth,\the\paperheight);
+  		\ifnum\thepage<2\relax % TITLEPAGE
+			%add the UPB-Logo
+			\node[anchor=north west,inner sep = 0pt]
+				at (.45,\the\paperheight)
+				{%
+					\includegraphics[height=1.5cm]{%
+						\logopath
+					}
+				};
+
+			% optional second logo
+			\ifsecondlogo
+				\node[anchor=north west,inner sep = 0pt]
+					at (4.5,\the\paperheight-7)
+					{%
+						\includegraphics[height=\secondlogoheight]{%
+						\secondlogopath
+						}
+					};
+			\fi
+		
+			% add colorful triangles
+			\node[anchor=north east, inner sep = 0pt, yshift=-.3cm]
+				at (\the\paperwidth,\the\paperheight)
+				{%
+					\includegraphics[height=.96\paperheight]{%
+						abb_theme/trianglesTitel
+					}
+				};
+
+		\else
+		\ifsectionframe %new section-frame
+
+			%add the UPB-Logo
+			\node[anchor=north west,inner sep = 0pt]
+				at (.48,\the\paperheight)
+				{%
+					\includegraphics[height=.9cm]{%
+						\logopath
+					}
+				};
+
+			% add colorful triangles
+			\node[anchor=south west, inner sep = 0pt, yshift=0cm]
+				at (0,0)
+				{%
+					\includegraphics[width=\paperwidth]{%
+						abb_theme/trianglesSection
+					}
+				};
+
+			% add fancy framenumber
+			\node[%
+				anchor=north,inner sep = 5mm, fill = upb_arcticblue,
+				minimum height=2cm, text height=.3cm
+				]
+			at (.85\paperwidth,\the\paperheight)
+			{%
+				\color{white}\huge\insertframenumber
+			};
+			\fill[white]
+				(.80\paperwidth,.775\paperheight)
+				-- (.90\paperwidth,.775\paperheight)
+				-- (.85\paperwidth,.83\paperheight)
+				-- 	(.80\paperwidth,.775\paperheight);
+
+
+
+		\else
+		\ifthankyouframe % last frame
+			%add the UPB-Logo
+			\node[anchor=north west,inner sep = 0pt]
+				at (.45,\the\paperheight)
+				{%
+					\includegraphics[height=1.5cm]{%
+						\logopath
+					}
+				};
+
+			% optional second logo
+			\ifsecondlogo
+			\node[anchor=north west,inner sep = 0pt]
+				at (4.5,\the\paperheight-7)
+				{%
+					\includegraphics[height=\secondlogoheight]{%
+						\secondlogopath
+					}
+				};
+			\fi
+	
+			% add colorful triangles
+			\node[anchor=north east, inner sep = 0pt, yshift=-.3cm]
+				at (\the\paperwidth,\the\paperheight)
+				{%
+					\includegraphics[height=.96\paperheight]{%
+						abb_theme/trianglesTitel.png
+					}
+				};
+
+		\else
+		\iftocframe %TOC frame
+			\node[anchor=south east, inner sep = 0pt, %yshift=-.3cm
+			]
+				at (\the\paperwidth,0)
+				{%
+					\includegraphics[width=\paperwidth]{%
+						abb_theme/trianglesOutline
+					}
+				};
+
+		\else % normal frame
+			%add the UPB-Logo
+			\node[anchor=north west,inner sep = 0pt]
+				at (.48,\the\paperheight)
+				{%
+					\includegraphics[height=.9cm]{%
+						\logopath
+					}
+				};
+
+			% add colorful triangles
+			\node[anchor=north east, inner sep = 0pt, yshift=-.3cm]
+				at (\the\paperwidth,\the\paperheight)
+				{%
+					\includegraphics[height=.97\paperheight]{%
+						abb_theme/trianglesContent
+					}
+				};
+		
+		\fi
+		\fi
+		\fi
+		\fi
+  \end{tikzpicture}
+}
+
+
+% TEMPLATE FOR THE TITLE PAGE
+\defbeamertemplate*{title page}{upb2024}[1][]{%
+	\begin{tikzpicture}
+		\useasboundingbox (0,0) rectangle (\the\paperwidth,\the\paperheight);
+
+		% TITLE
+		\node[%
+			anchor=west, upb_ultrablue, inner sep = 0pt, align=left,
+			text width = .75\paperwidth,mylinespace=1.5
+			] (TITLE)
+			at (1, .66\paperheight)
+			{%
+				\textbf{\LARGE \inserttitle}
+			};
+
+		% SUBTITLE
+		\node[%
+			black,inner sep = 0pt, text width=.75\paperwidth,
+			below = 3mm of TITLE
+			] (SUBTITLE)
+			{%
+				\insertsubtitle
+			};
+
+		% AUTHOR/DATE
+		\node[%
+			anchor=south west, inner sep = 0pt, align=left,
+			text width = .75\paperwidth,mylinespace=.8
+			] (AUTHORDATE)
+			at (1, .7)
+			{%
+				\footnotesize \insertauthor\\\insertdate
+			};
+	\end{tikzpicture}
+}
+
+
+% TEMPLATE FOR THE FRAME TITLE
+\defbeamertemplate*{frametitle}{upb2024}[1][] {%
+	% shifted frame title on the TOC-Frame due to the triangle-layout
+	%\ifnum\theistocframe = 1\relax
+	\iftocframe
+		\vspace{1.5cm}
+		\hspace{2.3cm}\textbf{\insertframetitle}
+	\else
+		\vspace{1.1cm}
+		\textbf{\insertframetitle}
+	\fi
+}
+
+% FOOTLINE TEMPLATE
+% This includes resetting the counters for special frames
+\setbeamertemplate{footline}
+{	
+	\ifthankyouframe
+		%
+	\else
+	\ifsectionframe
+		  %
+	\else
+	\hspace{6mm} \textbf{\color{upb_ultrablue}|}\hspace{1mm} \insertauthor\ -- \insertshorttitle\ -- \insertdate\ \hfill  \textbf{\footnotesize\insertframenumber} \hspace{.75cm}
+	\vspace{.3cm}
+	\fi
+	\fi
+}
+
+
+
+% A slide is automatically created for each new section.
+\AtBeginSection[]{%
+  \begin{frame}[sectionframe]
+  	\vfill
+  	\centering
+	\textbf{\color{upb_ultrablue}\LARGE \insertsectionhead}
+  	\vfill
+  \end{frame}
+}
+
+% The template provides an automatically generated closing slide. The
+% corresponding parameters can be customized via \renewcommand{}{}
+\newcommand{\thankyou}{Vielen Dank für die Aufmerksamkeit!}
+\newcommand{\subthankyou}{Ich freue mich auf eine spannende Diskussion!}
+\newcommand{\authormail}{mail@upb.de}
+\newcommand{\thankyouframe}{%
+	\begin{frame}[thankyouframe]
+		\vspace{2cm}
+		\textbf{\LARGE \color{upb_ultrablue} %
+			\thankyou
+		}\\[2mm]
+		{\Large \subthankyou}
+
+		\vspace{2cm}
+		\insertauthor\ {\color{upb_ultrablue}\Large | }\authormail
+	\end{frame}
+}
+
+% The template provides an automatically generated outline slide. The
+% corresponding parameters can be customized via \renewcommand{}{}
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
+\newcommand{\toctitle}{Gliederung}
+\newcommand{\toccontent}{\tableofcontents}
+\newcommand{\maketocframe}{%
+	\begin{frame}[tocframe]{\toctitle}
+		\begin{minipage}{.15\linewidth}
+			~
+		\end{minipage}
+		\begin{minipage}{.84\linewidth}
+			\toccontent
+		\end{minipage}
+	\end{frame}
+}
+
+
+
+%%%%
+% DEFININGS SOME TEXT EMPHASIZING
+\newcommand{\colemph}[1]{{\color{upb_skyblue}#1}}
+\newcommand{\important}[1]{{\color{upb_irisviolet}#1}}
+\setbeamercolor{alerted text}{fg=upb_fuchsiared}
+
+% DEFINING BLOCK STYLES
+\setbeamercolor{block title}{fg=upb_ultrablue,bg=upb_skyblue!20}
+\setbeamercolor{block body}{bg=upb_skyblue!20}
+
+\setbeamercolor{block title alerted}{bg=upb_fuchsiared!20, fg=upb_fuchsiared}
+\setbeamercolor{block body alerted}{bg=upb_fuchsiared!20}
+
+\setbeamercolor{block title example}{bg=upb_irisviolet!20,fg=upb_irisviolet}
+\setbeamercolor{block body example}{bg=upb_irisviolet!20}
+
+
+\setbeamertemplate{itemize items}[circle]
+\setbeamercolor*{item}{fg=black}

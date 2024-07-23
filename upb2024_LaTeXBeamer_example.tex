@@ -1,0 +1,129 @@
+%!TEX program = xelatex
+%upb2024_LaTeXBeamer_example.tex
+% Max Hoffmann
+% max.hoffmann@math.upb.de
+% Version: 2024Jul23
+
+% ABOUT: This is a very elementary example for the use of the beamer class
+% upb2024 in which the essential functions are presented.
+
+%%% IMPORTANT %%%
+%Due to the font specification of the CD (Segoe UI), it is necessary to have this font installed and to use XeLaTeX for compiling.
+
+%Install Segoe UI
+% Linux: https://github.com/mrbvrz/segoe-ui-linux
+% Mac: https://github.com/tejasraman/segoe-ui-macos
+ 
+
+\documentclass[
+	% uncomment, if you want to print your presentation as a handout
+	% with possibly more than one slide per a4page. You can choose
+	% the number of slides printed on one handout-page below in the
+	% options of \usetheme.
+		%handout
+	aspectratio=169
+	] {beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{blindtext}
+
+\usetheme[
+	% choose the language variant of the UPB logo
+		%logogerman,  %default
+		logoenglish,
+	% choose whether a second logo should be displayed on the front page. The file path to the second logo can be set \renewcommand{\secondlogopath}{<yourpath>}. The height of the second logo can be changed via \renewcommand{\secondlogoheight}{<height>} (default: 1cm).
+		%secondlogo,
+	% choose the variant of the title page
+		texttitle, %default
+		%picturetitlenarrow (not yet implemented),
+		%picturetitlewide (not yet implemented),
+]{upb2024}
+
+
+% GENERAL INFORMATIONS
+\title[Shorttitle]{This could be the title of your presentation\-}
+\subtitle{Subtitle and further information on the presentation with a maximum of four lines. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vel mi sollicitudin, euismod nulla id, pretium lorem. Mauris vel lorem ipsum. Sed rhoncus vestibulum sem ut porta. }
+\author{Author}
+\date{Place, Time}
+
+
+\begin{document}
+	%TITLEPAGE
+	\begin{frame}[plain]
+		\titlepage
+	\end{frame}
+
+% Insert the automatic outline slide. The LaTeX TOC is generated automatically.
+% The slide content can be overwritten with
+% “\renewcommand{\toccontent}{<your TOC content}”.
+\maketocframe
+
+\section{Introduction}
+\begin{frame}{Hello World}
+	\blindtext
+\end{frame}
+
+\section{Another Section}
+\begin{frame}{Hello World 2}
+	\blindtext
+\end{frame}
+
+\section{Pre-Implemented Design Elements}
+\begin{frame}{Emphasizing Text}
+\small
+\begin{minipage}{.46\linewidth}
+The following colors are predefined in the template and can be used to design the presentation:\\
+
+
+\begin{minipage}{.49\linewidth}
+\texttt{\color{upb_ultrablue}upb\_ultrablue}\\
+\texttt{\color{upb_skyblue}upb\_skyblue}\\
+\texttt{\color{upb_saphirblue}upb\_saphirblue}\\
+\texttt{\color{upb_irisviolet}upb\_irisviolet}\\
+\end{minipage}
+\begin{minipage}{.49\linewidth}
+\texttt{\color{upb_fuchsiared}upb\_fuchsiared}\\
+\texttt{\color{upb_oceanblue}upb\_oceanblue}\\
+\texttt{\color{upb_arcticblue}upb\_arcticblue}
+\end{minipage}
+
+
+\end{minipage}
+\hfill
+\begin{minipage}{.4\linewidth}
+	With the commands \texttt{$\backslash$colemph\{\ldots\}},
+	\texttt{$\backslash$important\{\ldots\}} and \texttt{$\backslash$alert\{\ldots\}} you can emphasize parts of your text
+	in \colemph{\texttt{upb\_skyblue}}, in \important{\texttt{upb\_irisviolet}} or in \alert{\texttt{upb\_fuchsiared}}.
+\end{minipage}
+
+
+\footnotesize
+Please follow the guidelines for color usage of the Cooperated Design:\\
+\url{https://www.uni-paderborn.de/universitaet/presse-kommunikation-marketing/brandportal/basiselemente\#farbwelt}
+\end{frame}
+
+\begin{frame}{Different Types of Blocks}
+	\begin{block}{Normal Block}
+		This is a normal \texttt{block}.
+	\end{block}
+
+	\begin{alertblock}{Alert Block}
+		This is an \texttt{alert block}.
+	\end{alertblock}
+
+	\begin{exampleblock}{Example Block}
+		This is an \texttt{example block}.
+	\end{exampleblock}
+\end{frame}
+
+
+%Inserting the automatic closing slide. The content can be set via “\renewcommand”.
+\renewcommand{\thankyou}{Thank you very much for your attention!}
+\renewcommand{\subthankyou}{I look forward to an exciting discussion!}
+\renewcommand{\authormail}{author@upb.de}
+\thankyouframe
+
+
+\end{document}
