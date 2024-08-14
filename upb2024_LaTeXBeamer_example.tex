@@ -8,11 +8,8 @@
 % upb2024 in which the essential functions are presented.
 
 %%% IMPORTANT %%%
-%Due to the font specification of the CD (Segoe UI), it is necessary to have this font installed and to use XeLaTeX for compiling.
+%Due to the font specification of the CD, it is necessary to use XeLaTeX for compiling.
 
-%Install Segoe UI
-% Linux: https://github.com/mrbvrz/segoe-ui-linux
-% Mac: https://github.com/tejasraman/segoe-ui-macos
  
 
 \documentclass[
@@ -29,7 +26,16 @@
 \usepackage[english]{babel}
 \usepackage{blindtext}
 
+
 \usetheme[
+	% choose between the two fonts "Karla" and "Segoe UI" specified in the CD.
+	% "Karla" is included in this template, "Segoe UI" my need to be installed
+	% manually (e.g.:
+	%		Linux: https://github.com/mrbvrz/segoe-ui-linux
+	%       Mac: https://github.com/tejasraman/segoe-ui-macos
+	%)
+		karlafont,  %default
+		%segoefont,
 	% choose the language variant of the UPB logo
 		%logogerman,  %default
 		logoenglish,
@@ -102,6 +108,9 @@ The following colors are predefined in the template and can be used to design th
 \footnotesize
 Please follow the guidelines for color usage of the Cooperated Design:\\
 \url{https://www.uni-paderborn.de/universitaet/presse-kommunikation-marketing/brandportal/basiselemente\#farbwelt}
+
+\vfill
+Of course, you can also use \texttt{$\backslash$textit\{\ldots\}} for \textit{italic} and \texttt{$\backslash$textbf\{\ldots\}} for \textbf{bold} as usual.
 \end{frame}
 
 \begin{frame}{Different Types of Blocks}

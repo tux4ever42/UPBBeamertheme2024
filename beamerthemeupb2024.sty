@@ -29,10 +29,46 @@
 
 
 % FONT
-% we use Segoe UI as the default font
+% we use Karla as the default (option: karlafont) font.
+% alternatively, segoe UI an be used (option: segoefont)
+% Segoe UI font may need to be installed:
+%     Install Segoe UI
+%        Linux: https://github.com/mrbvrz/segoe-ui-linux
+%        Mac: https://github.com/tejasraman/segoe-ui-macos
+% ).
+
 \renewcommand{\familydefault}{\sfdefault}
 \usepackage{fontspec}
+
+%default
+\setsansfont{Karla}[
+	Path=./fonts/,
+	Extension = .ttf,
+	UprightFont=*-Regular,
+  BoldFont=*-Bold,
+  ItalicFont=*-Italic,
+  BoldItalicFont=*-BoldItalic
+]
+
+% specifying the font options
+\DeclareOptionBeamer{karlafont}[true]{%
+	\setsansfont{Karla}[
+	Path=./fonts/,
+	Extension = .ttf,
+	UprightFont=*-Regular,
+  BoldFont=*-Bold,
+  ItalicFont=*-Italic,
+  BoldItalicFont=*-BoldItalic
+]
+}
+
+\DeclareOptionBeamer{segoefont}[true]{%
 \setsansfont{Segoe UI}
+}
+
+\ProcessOptionsBeamer
+
+
 
 % COLOR DEFINITION
 % defining the UPB-colors
